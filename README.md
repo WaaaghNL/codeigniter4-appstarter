@@ -1,3 +1,23 @@
+# CodeIgniter 4 Application Starter - WaaaghNL Edition
+
+## Setup
+1. Clone the repo to local folder `git clone https://github.com/WaaaghNL/codeigniter4-appstarter.git .`
+2. Run Composer `composer install` of `composer install --no-dev` to deploy to production, skips the development products form the composer.json
+2. Run Spark `php spark shield:setup`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # CodeIgniter 4 Application Starter
 
 ## What is CodeIgniter?
