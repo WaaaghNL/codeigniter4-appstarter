@@ -4,16 +4,18 @@
 1. Clone the repo to local folder `git clone https://github.com/WaaaghNL/codeigniter4-appstarter.git .`
 2. Run Composer `composer install` of `composer install --no-dev` to deploy to production, skips the development products form the composer.json
 3. Run Spark `php spark shield:setup`
-
-## First use edits
-1. Check the baseURL in the .env file
-2. 
+4. Edit the baseURL in the .env file
+5. Run https://example.com/shield/create-default-users to create your first admin user.
 
 ## Move to Production
 Change the Environment from `development` to `production` in the .env file.
 
+## Update
+`composer update` whenever there is a new release of the framework.
 
-
+When updating, check the release notes to see if there are any changes you might need to apply
+to your `app` folder. The affected files can be copied or merged from
+`vendor/codeigniter4/framework/app`.
 
 # CodeIgniter 4 Application Starter
 
@@ -30,40 +32,6 @@ More information about the plans for version 4 can be found in [CodeIgniter 4](h
 
 You can read the [user guide](https://codeigniter.com/user_guide/)
 corresponding to the latest version of the framework.
-
-## Installation & updates
-
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
-
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
-
-## Setup
-
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
-
-## Important Change with index.php
-
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
-
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
-
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
 
 ## Server Requirements
 
