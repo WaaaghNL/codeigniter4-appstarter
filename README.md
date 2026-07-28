@@ -5,7 +5,6 @@
 2. Run Composer `composer install` of `composer install --no-dev` to deploy to production, skips the development products form the composer.json
 3. Run Spark `php spark shield:setup`
 4. Edit the baseURL in the .env file
-5. Run https://example.com/shield/create-default-users to create your first admin user.
 
 ## Move to Production
 Change the Environment from `development` to `production` in the .env file.
