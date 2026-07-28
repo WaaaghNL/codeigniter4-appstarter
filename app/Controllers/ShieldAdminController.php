@@ -21,41 +21,9 @@ class ShieldAdminController extends BaseController
      */
     private function checkAccess(): void
     {
-        if (! auth()->user()?->inGroup('superadmin')) {
+        if (! auth()->user()?->inGroup('superadmin', 'admin')) {
             throw \CodeIgniter\Exceptions\PageForbiddenException::forPageForbidden();
         }
-    }
-
-    /**
-     * Maak standaard gebruikers aan
-     */
-    public function createDefaultUsers(): RedirectResponse
-    {
-        $usersList = $this->userModel->findAll();
-		
-		if(count($usersList) === 0){
-			
-			$user = new User([
-				'username' => 'admin',
-				'email'    => 'admin@example.com',
-				'password' => 'adminpass',
-			]);
-
-			$this->userModel->save($user);
-
-			// To get the complete user object with ID, we need to get from the database
-			$user = $this->userModel->findById($this->userModel->getInsertID());
-			
-			// Add to default group and superadmin
-			$this->userModel->addToDefaultGroup($user);	
-			
-			//First user is superadmin
-			$user->addGroup('superadmin');
-			return redirect()->to('/login');
-		}
-		else{
-			return redirect()->to('/');
-		}		
     }
 
     /**

@@ -8,7 +8,6 @@ $routes->get('/', 'Home::index');
 /* Shield Admin */
 $routes->group('shield', static function ($routes) {
     $routes->get('/', 'ShieldAdminController::index');
-    $routes->get('create-default-users', 'ShieldAdminController::createDefaultUsers');
     $routes->get('create', 'ShieldAdminController::create');
     $routes->post('store', 'ShieldAdminController::store');
     $routes->get('edit/(:num)', 'ShieldAdminController::edit/$1');
