@@ -4,7 +4,8 @@
 1. Clone the repo to local folder `git clone https://github.com/WaaaghNL/codeigniter4-appstarter.git .`
 2. Run Composer `composer install` of `composer install --no-dev` to deploy to production, skips the development products form the composer.json
 3. Run Spark `php spark shield:setup`
-4. Edit the baseURL in the .env file
+4. `cp sample.env .env`
+5. Edit the baseURL in the .env file
 
 ## Allow User Registrations
 Change `public bool $allowRegistration = false;` Line: `161:app/Config/Auth.php` to `true`
