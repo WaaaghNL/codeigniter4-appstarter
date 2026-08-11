@@ -6,6 +6,9 @@
 3. Run Spark `php spark shield:setup`
 4. Edit the baseURL in the .env file
 
+## Allow User Registrations
+Change `public bool $allowRegistration = false;` Line: `161:app/Config/Auth.php` to `true`
+
 ## Move to Production
 Change the Environment from `development` to `production` in the .env file.
 

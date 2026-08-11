@@ -5,6 +5,8 @@ use CodeIgniter\Router\RouteCollection;
 /** @var RouteCollection $routes */
 $routes->get('/', 'Home::index');
 
+service('auth')->routes($routes);
+
 /* Shield Admin */
 $routes->group('shield', static function ($routes) {
     $routes->get('/', 'ShieldAdminController::index');
