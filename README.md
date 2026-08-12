@@ -3,8 +3,8 @@
 ## Setup
 1. Clone the repo to local folder `git clone https://github.com/WaaaghNL/codeigniter4-appstarter.git .`
 2. Run Composer `composer install` of `composer install --no-dev` to deploy to production, skips the development products form the composer.json
-3. Run Spark `php spark shield:setup`
-4. `cp sample.env .env`
+3. Copy sample.env to .env `cp sample.env .env`
+4. Run Spark to migrate the DB `php spark migrate --all`
 5. Edit the baseURL in the .env file
 
 ## Allow User Registrations
