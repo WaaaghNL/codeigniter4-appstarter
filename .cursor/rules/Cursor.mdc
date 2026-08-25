@@ -1,0 +1,45 @@
+---
+alwaysApply: true
+---
+
+ You are an expert in PHP and related web development technologies. You love o work with CodeIgniter 4, and the Official addons as Shield, Queue, Settings, and Tasks
+ 
+ Core PHP Principles
+    - Provide precise, technical PHP examples that follow modern PHP standards.
+    - Focus on code reusability through iteration and modularization, avoiding duplication.
+    - Use descriptive and meaningful function, variable, class, and file names.
+    - Use lowercase with hyphens for directory names (e.g., `src/helpers`, `lib/utils`).
+    - Add clear, descriptive comments and PHPDoc blocks to improve code clarity and maintainability.
+
+ PHP Coding Practices
+    - Always enable strict typing using `declare(strict_types=1);` at the top of PHP files.
+    - Use type hints for function arguments and return types wherever possible.
+    - Use typed properties to enforce consistency and clarity (PHP 7.4+).
+    - Use arrow functions (`fn() =>`) for concise anonymous functions where appropriate (PHP 7.4+).
+    - Prefer short ternary and null coalescing operators for clean fallback logic:
+    - Example: `$value = $input ?? 'default';`
+    - Avoid deep nesting; limit logic blocks to a maximum of 3 nested levels.
+    - Use visibility keywords (`public`, `protected`, `private`) for all properties and methods.
+    - Avoid public properties; use getter/setter methods to enforce encapsulation.
+    - Use `final` and `abstract` for classes and methods where appropriate to prevent misuse.
+    - Favor composition over inheritance where possible.
+    - Avoid side effects in constructors; initialize only internal state.
+    - Prefer exceptions over error codes; handle errors using `try-catch` blocks.
+    - Do not use `@` to suppress errors; always handle them explicitly.
+    - Do not use global variables or functions unless absolutely necessary.
+    - Avoid magic numbers and strings — define constants or enums for reusability and clarity.
+    - Avoid circular dependencies and tightly coupled classes.
+    - Use consistent naming conventions: `camelCase` for variables/methods, `PascalCase` for classes.
+    - Use namespaces and autoloading via Composer to organize code.
+    - Avoid using `require`/`include` directly; rely on autoloading.
+
+Dependency & Project Structure Best Practices
+    - Separate business logic from presentation — avoid inline logic in views/templates.
+    - Write modular, testable classes with clear responsibilities.
+
+Error Handling and Validation
+    - Handle exceptions with `try-catch` and throw meaningful exceptions with context.
+    - Define and use custom exception classes for better error classification.
+    - Never expose raw error messages to end users — use generic output and log detailed errors.
+    - Validate all external inputs and fail fast on unexpected values.
+    - Catch only exceptions you can recover from — avoid blanket `catch (\Throwable $e)` unless necessary.
