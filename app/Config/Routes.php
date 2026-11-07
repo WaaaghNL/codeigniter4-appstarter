@@ -8,13 +8,13 @@ $routes->get('/', 'Home::index');
 service('auth')->routes($routes);
 
 /* Shield Admin */
-$routes->group('shield', static function ($routes) {
+$routes->group('shield', ['filter' => ['session', 'group:superadmin,admin']], static function ($routes) {
     $routes->get('/', 'ShieldAdminController::index');
     $routes->get('create', 'ShieldAdminController::create');
     $routes->post('store', 'ShieldAdminController::store');
     $routes->get('edit/(:num)', 'ShieldAdminController::edit/$1');
     $routes->post('update/(:num)', 'ShieldAdminController::update/$1');
-    $routes->get('delete/(:num)', 'ShieldAdminController::delete/$1');
+    $routes->post('delete/(:num)', 'ShieldAdminController::delete/$1');
     $routes->get('permissions/(:num)', 'ShieldAdminController::permissions/$1');
     $routes->post('permissions/(:num)', 'ShieldAdminController::savePermissions/$1');
 });

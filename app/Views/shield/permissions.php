@@ -12,6 +12,7 @@
 <?php $groups = $user->getGroups(); ?>
 
 <form method="post" action="/shield/permissions/<?= esc($user->id) ?>">
+    <?= csrf_field() ?>
 	<?php foreach ($availableGroups as $group): ?>
 
 	<p>
@@ -34,7 +35,7 @@
 </form>
 
 <p>
-    <a= site_url('shield') ?>
+    <a href="<?= site_url('shield') ?>">Terug</a>
 </p>
 
 </body>

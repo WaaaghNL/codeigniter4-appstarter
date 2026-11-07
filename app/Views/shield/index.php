@@ -36,7 +36,14 @@
             </td>
 
             <td>
-                <a href="<?=site_url("shield/edit");?>/<?= esc($user->id) ?>">Edit</a> | <a href="<?=site_url("shield/permissions");?>/<?= esc($user->id) ?>">Permissions</a> | <a href="<?=site_url("shield/delete");?>/<?= esc($user->id) ?>" onclick="return confirm('Remove User?')">Remove</a>
+                <a href="<?= site_url('shield/edit/' . $user->id) ?>">Edit</a>
+                |
+                <a href="<?= site_url('shield/permissions/' . $user->id) ?>">Permissions</a>
+                |
+                <form method="post" action="<?= site_url('shield/delete/' . $user->id) ?>" style="display:inline">
+                    <?= csrf_field() ?>
+                    <button type="submit" onclick="return confirm('Remove User?')">Remove</button>
+                </form>
             </td>
         </tr>
 

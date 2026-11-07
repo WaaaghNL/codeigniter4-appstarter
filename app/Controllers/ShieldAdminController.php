@@ -1,29 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
+use App\Libraries\ShieldGroupAuthorization;
+use App\Exceptions\PageForbiddenException;
+use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\Shield\Entities\User;
 use CodeIgniter\Shield\Models\UserModel;
-use CodeIgniter\HTTP\RedirectResponse;
 use Config\AuthGroups;
 
 class ShieldAdminController extends BaseController
 {
     protected UserModel $userModel;
 
+    protected ShieldGroupAuthorization $groupAuthorization;
+
     public function __construct()
     {
-        $this->userModel = auth()->getProvider();
+        $this->userModel          = auth()->getProvider();
+        $this->groupAuthorization = new ShieldGroupAuthorization(
+            config(AuthGroups::class),
+            $this->userModel,
+        );
     }
 
-    /**
-     * Controle of gebruiker superadmin is
-     */
-    private function checkAccess(): void
+    private function requireActor(): User
     {
-        if (! auth()->user()?->inGroup('superadmin', 'admin')) {
-            throw \CodeIgniter\Exceptions\PageForbiddenException::forPageForbidden();
+        $user = auth()->user();
+
+        if ($user === null) {
+            throw PageForbiddenException::forPageForbidden();
         }
+
+        return $user;
     }
 
     /**
@@ -31,12 +42,10 @@ class ShieldAdminController extends BaseController
      */
     public function index()
     {
-        $this->checkAccess();
-
         $users = $this->userModel->findAll();
 
         return view('shield/index', [
-            'users' => $users
+            'users' => $users,
         ]);
     }
 
@@ -45,8 +54,6 @@ class ShieldAdminController extends BaseController
      */
     public function create()
     {
-        $this->checkAccess();
-
         return view('shield/create');
     }
 
@@ -55,8 +62,6 @@ class ShieldAdminController extends BaseController
      */
     public function store(): RedirectResponse
     {
-        $this->checkAccess();
-
         $user = new User([
             'username' => $this->request->getPost('username'),
             'email'    => $this->request->getPost('email'),
@@ -65,12 +70,10 @@ class ShieldAdminController extends BaseController
         ]);
 
         $this->userModel->save($user);
-		
-		// To get the complete user object with ID, we need to get from the database
-		$user = $this->userModel->findById($users->getInsertID());
 
-		// Add to default group
-		$this->userModel->addToDefaultGroup($user);
+        $user = $this->userModel->findById($this->userModel->getInsertID());
+
+        $this->userModel->addToDefaultGroup($user);
 
         return redirect()->to('/shield');
     }
@@ -80,12 +83,14 @@ class ShieldAdminController extends BaseController
      */
     public function edit(int $id)
     {
-        $this->checkAccess();
-
         $user = $this->userModel->find($id);
 
+        if ($user === null) {
+            throw PageForbiddenException::forPageForbidden();
+        }
+
         return view('shield/edit', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -94,9 +99,11 @@ class ShieldAdminController extends BaseController
      */
     public function update(int $id): RedirectResponse
     {
-        $this->checkAccess();
-
         $user = $this->userModel->find($id);
+
+        if ($user === null) {
+            throw PageForbiddenException::forPageForbidden();
+        }
 
         $user->username = $this->request->getPost('username');
         $user->email    = $this->request->getPost('email');
@@ -111,52 +118,87 @@ class ShieldAdminController extends BaseController
     }
 
     /**
-     * Verwijderen gebruiker
+     * Verwijderen gebruiker (POST only).
      */
     public function delete(int $id): RedirectResponse
     {
-        $this->checkAccess();
-
-        $user = $this->userModel->find($id);
-
-        if ($user) {
-            $this->userModel->delete($id);
+        if (! $this->request->is('post')) {
+            throw PageForbiddenException::forPageForbidden();
         }
+
+        $actor = $this->requireActor();
+        $user  = $this->userModel->find($id);
+
+        if ($user === null) {
+            return redirect()->to('/shield');
+        }
+
+        $this->groupAuthorization->assertCanDeleteUser($actor, $user);
+        $this->userModel->delete($id);
 
         return redirect()->to('/shield');
     }
 
-    /**
-     * Alleen groepen aanpassen
-     */
+    public function permissions(int $id)
+    {
+        $actor = $this->requireActor();
+        $user  = $this->userModel->find($id);
 
-	public function permissions(int $id)
-	{
-		$this->checkAccess();
+        if ($user === null) {
+            throw PageForbiddenException::forPageForbidden();
+        }
 
-		$user = $this->userModel->find($id);
+        $this->groupAuthorization->assertCanManageUserGroups($actor, $user);
 
-		$authGroups = config(AuthGroups::class);
+        $authGroups = config(AuthGroups::class);
 
-		return view('shield/permissions', [
-			'user' => $user,
-			'availableGroups' => array_keys($authGroups->groups),
-		]);
-	}
+        return view('shield/permissions', [
+            'user'              => $user,
+            'availableGroups'   => $this->assignableGroupsForView($actor, $user),
+            'authGroups'        => $authGroups,
+        ]);
+    }
 
     /**
      * Groepen opslaan
      */
     public function savePermissions(int $id): RedirectResponse
     {
-        $this->checkAccess();
+        $actor = $this->requireActor();
+        $user  = $this->userModel->find($id);
 
-        $user = $this->userModel->find($id);
+        if ($user === null) {
+            throw PageForbiddenException::forPageForbidden();
+        }
 
+        $this->groupAuthorization->assertCanManageUserGroups($actor, $user);
+
+        /** @var list<string>|null $groups */
         $groups = $this->request->getPost('groups');
 
-        $user->syncGroups(...$groups);	
+        $resolved = $this->groupAuthorization->resolveGroupsForSync($actor, $user, $groups);
+
+        $user->syncGroups(...$resolved);
 
         return redirect()->to('/shield');
+    }
+
+    /**
+     * Groups shown in the permissions UI (excludes ones the actor may not assign).
+     *
+     * @return list<string>
+     */
+    private function assignableGroupsForView(User $actor, User $target): array
+    {
+        $all = $this->groupAuthorization->validGroupNames();
+
+        if ($actor->inGroup('superadmin')) {
+            return $all;
+        }
+
+        return array_values(array_filter(
+            $all,
+            static fn (string $group): bool => ! in_array($group, ShieldGroupAuthorization::PRIVILEGED_GROUPS, true),
+        ));
     }
 }

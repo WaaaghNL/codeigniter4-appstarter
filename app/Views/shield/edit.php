@@ -8,6 +8,7 @@
 <h1>Gebruiker wijzigen</h1>
 
 <form method="post" action="/shield/update/<?= esc($user->id) ?>">
+    <?= csrf_field() ?>
 	<p>
         <label>Gebruikersnaam</label><br>
         <input

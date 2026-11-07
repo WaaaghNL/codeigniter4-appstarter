@@ -6,7 +6,8 @@
 3. Copy sample.env to .env `cp sample.env .env`
 4. Generate Key: `php spark key:generate`
 5. Run Spark to migrate the DB `php spark migrate --all`
-6. Edit the baseURL in the .env file
+6. Create the first superadmin (no demo account is seeded): see [docs/SECURITY_BOOTSTRAP.md](docs/SECURITY_BOOTSTRAP.md)
+7. Edit the baseURL in the .env file
 
 ## Allow User Registrations
 Change `public bool $allowRegistration = false;` Line: `161:app/Config/Auth.php` to `true`
