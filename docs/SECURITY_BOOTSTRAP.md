@@ -39,4 +39,6 @@ Earlier versions ran a migration that inserted a known demo user (`admin` / `adm
 
 ## CSRF and security headers
 
-Global CSRF (session-based, matching Shield session auth) and `SecureHeaders` are enabled in `app/Config/Filters.php`. Shield auth views and `/shield` forms include `csrf_field()`.
+Global CSRF (session-based, matching Shield session auth) and `SecureHeaders` are enabled in `app/Config/Filters.php`.
+
+**CSRF audit (app + Shield):** All `/shield` mutation forms (`create`, `edit`, `permissions`, delete on `index`) include `csrf_field()`. Shield’s bundled auth views (`login`, `register`, magic link, email 2FA/activate) already include `csrf_field()` and work with the global filter.

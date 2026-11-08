@@ -78,4 +78,33 @@ final class ShieldGroupAuthorizationTest extends CIUnitTestCase
 
         $this->authorization()->resolveGroupsForSync($super, $super, ['user']);
     }
+
+    public function testAdminCannotModifySuperadminProfile(): void
+    {
+        $admin = ShieldTestHelpers::createUser('admin3', 'admin3@example.com', 'Password1!', 'admin');
+        $super = ShieldTestHelpers::createUser('superx', 'superx@example.com', 'Password1!', 'superadmin');
+
+        $this->expectException(PageForbiddenException::class);
+
+        $this->authorization()->assertCanModifyUserProfile($admin, $super);
+    }
+
+    public function testAdminCanModifyOwnProfile(): void
+    {
+        $admin = ShieldTestHelpers::createUser('admin4', 'admin4@example.com', 'Password1!', 'admin');
+
+        $this->authorization()->assertCanModifyUserProfile($admin, $admin);
+
+        $this->addToAssertionCount(1);
+    }
+
+    public function testAdminCannotModifyOtherAdminProfile(): void
+    {
+        $adminA = ShieldTestHelpers::createUser('adminA', 'adminA@example.com', 'Password1!', 'admin');
+        $adminB = ShieldTestHelpers::createUser('adminB', 'adminB@example.com', 'Password1!', 'admin');
+
+        $this->expectException(PageForbiddenException::class);
+
+        $this->authorization()->assertCanModifyUserProfile($adminA, $adminB);
+    }
 }

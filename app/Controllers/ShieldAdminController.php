@@ -83,11 +83,14 @@ class ShieldAdminController extends BaseController
      */
     public function edit(int $id)
     {
-        $user = $this->userModel->find($id);
+        $actor = $this->requireActor();
+        $user  = $this->userModel->find($id);
 
         if ($user === null) {
             throw PageForbiddenException::forPageForbidden();
         }
+
+        $this->groupAuthorization->assertCanModifyUserProfile($actor, $user);
 
         return view('shield/edit', [
             'user' => $user,
@@ -99,11 +102,14 @@ class ShieldAdminController extends BaseController
      */
     public function update(int $id): RedirectResponse
     {
-        $user = $this->userModel->find($id);
+        $actor = $this->requireActor();
+        $user  = $this->userModel->find($id);
 
         if ($user === null) {
             throw PageForbiddenException::forPageForbidden();
         }
+
+        $this->groupAuthorization->assertCanModifyUserProfile($actor, $user);
 
         $user->username = $this->request->getPost('username');
         $user->email    = $this->request->getPost('email');

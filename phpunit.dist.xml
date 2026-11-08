@@ -21,8 +21,15 @@
     </coverage>
 
     <testsuites>
-        <testsuite name="App">
-            <directory>./tests</directory>
+        <testsuite name="Unit">
+            <directory>./tests/unit</directory>
+        </testsuite>
+        <testsuite name="SecurityIntegration">
+            <directory>./tests/feature</directory>
+            <directory>./tests/database</directory>
+        </testsuite>
+        <testsuite name="Legacy">
+            <directory>./tests/session</directory>
         </testsuite>
     </testsuites>
 

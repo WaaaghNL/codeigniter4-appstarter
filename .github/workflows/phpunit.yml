@@ -3,7 +3,11 @@ name: PHPUnit
 on:
   pull_request:
     branches:
+      - master
       - develop
+  push:
+    branches:
+      - master
 
 permissions:
   contents: read
@@ -17,7 +21,7 @@ jobs:
         php-versions: ['8.2', '8.5']
 
     runs-on: ubuntu-24.04
-    if: (! contains(github.event.pull_request.title, '[ci skip]'))
+    if: github.event_name != 'pull_request' || ! contains(github.event.pull_request.title, '[ci skip]')
 
     steps:
       - name: Checkout
@@ -51,5 +55,11 @@ jobs:
           # https://getcomposer.org/doc/articles/troubleshooting.md#api-rate-limit-and-oauth-tokens
           # COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
 
-      - name: Test with phpunit
-        run: vendor/bin/phpunit --coverage-text
+      - name: Test with phpunit (unit)
+        run: vendor/bin/phpunit -c phpunit.dist.xml --testsuite Unit --no-coverage
+
+      - name: Test with phpunit (security integration)
+        run: vendor/bin/phpunit -c phpunit.dist.xml --testsuite SecurityIntegration --no-coverage
+
+      - name: Test with phpunit (legacy + coverage)
+        run: vendor/bin/phpunit -c phpunit.dist.xml --testsuite Legacy --coverage-text

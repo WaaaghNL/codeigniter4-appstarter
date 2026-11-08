@@ -74,6 +74,30 @@ final class ShieldGroupAuthorization
         throw PageForbiddenException::forPageForbidden();
     }
 
+    /**
+     * Profile fields (username, email, password) for an existing user.
+     */
+    public function assertCanModifyUserProfile(User $actor, User $target): void
+    {
+        if ($actor->inGroup('superadmin')) {
+            return;
+        }
+
+        if ($actor->inGroup('admin')) {
+            if ($actor->id === $target->id) {
+                return;
+            }
+
+            if ($target->inGroup('superadmin') || $target->inGroup('admin')) {
+                throw PageForbiddenException::forPageForbidden();
+            }
+
+            return;
+        }
+
+        throw PageForbiddenException::forPageForbidden();
+    }
+
     public function assertCanDeleteUser(User $actor, User $target): void
     {
         if ($actor->id === $target->id) {
